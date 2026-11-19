@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PESCADOR — Cozinha Caiçara em Arraial do Cabo, RJ</title>
+<meta name="description" content="PESCADOR — Cozinha Caiçara em Arraial do Cabo, RJ. Frutos do mar, moquecas e pratos para compartilhar. Monte seu pedido e finalize pelo WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"PESCADOR — Cozinha Caiçara","servesCuisine":["Brasileira","Frutos do mar"],"address":{"@type":"PostalAddress","addressLocality":"Arraial do Cabo","addressRegion":"RJ","addressCountry":"BR"}}</script>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>tailwind.config={theme:{extend:{colors:{ocean:'var(--ocean)',aqua:'var(--aqua)',sand:'var(--sand)',bg:'var(--bg)',card:'var(--card)',ink:'var(--ink)',mute:'var(--mute)',line:'var(--line)'},fontFamily:{serif:['Fraunces','Georgia','serif'],sans:['Inter','system-ui','sans-serif']}}}}</script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fbfaf6;--card:#fff;--ink:#0d2b3e;--mute:#566b78;--line:#e6e1d3;--ocean:#0b4a6f;--aqua:#7fd1c7;--sand:#f3ead7;--ondark:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0a1a24;--card:#10293a;--ink:#eef3f4;--mute:#9bb2bd;--line:#1d3b4e;--ocean:#7fd1c7;--aqua:#2f8f93;--sand:#12303f}}
+html{scroll-behavior:smooth;scroll-padding-top:76px}body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border-radius:999px;padding:.8rem 1.4rem;font-weight:600;transition:.2s}
+.btn-wa{background:#1fa855;color:#fff}.btn-wa:hover{background:#188a45}
+.btn-line{border:1.5px solid currentColor}.btn-line:hover{background:rgba(255,255,255,.12)}
+.hero{background:linear-gradient(180deg,#0b4a6f 0%,#0e6a86 60%,#43b3b0 100%)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:1.25rem;overflow:hidden}
+.chip{padding:.5rem 1rem;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:.875rem;font-weight:500;white-space:nowrap}
+.chip[aria-pressed=true]{background:var(--ocean);color:#fff;border-color:var(--ocean)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip[aria-pressed=true]{color:#06202c}}
+.tag{font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:.2rem .6rem;background:var(--aqua);color:#06323a}
+.scroll-x{overflow-x:auto;scrollbar-width:none}.scroll-x::-webkit-scrollbar{display:none}
+:focus-visible{outline:3px solid var(--aqua);outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+const {useState,useMemo}=React; const html=htm.bind(React.createElement);
+
+/* ============ CONFIGURAÇÃO EDITÁVEL ============ */
+const CONFIG={
+  name:'PESCADOR', tagline:'Cozinha Caiçara', city:'Arraial do Cabo, RJ',
+  address:'Endereço a definir — Arraial do Cabo, RJ',
+  mapQuery:'Arraial do Cabo, RJ',
+  whatsapp:'5500000000000', // DDI+DDD+número, só dígitos
+  greeting:'Olá, PESCADOR! Gostaria de fazer este pedido:',
+  hours:[['Segunda a quinta','A definir'],['Sexta a domingo','A definir'],['Feriados','A definir']],
+  currencyNote:'Preços e cardápio demonstrativos — sujeitos a confirmação.'
+};
+/* Fotografias: preencha "photo" com a URL de uma imagem própria/licenciada. Vazio = ilustração. */
+const PHOTOS={hero:'',sobre:'',gallery:['','','','','','']};
+const CATS=[['petiscos','Petiscos'],['regionais','Pratos regionais'],['dois','Para duas pessoas'],['bebidas','Bebidas'],['sobremesas','Sobremesas']];
+/* id, categoria, nome, descrição, preço, flags(s=compartilhar,t=mais pedido), foto */
+const RAW=[
+['p1','petiscos','Lula à dorê','Anéis de lula em crosta dourada, com molho tártaro e limão.',48,'t'],
+['p2','petiscos','Isca de peixe','Filé de peixe em tiras crocantes, com maionese de ervas.',44,''],
+['p3','petiscos','Camarão empanado','Camarões graúdos empanados, com molho agridoce suave.',54,'t'],
+['p4','petiscos','Casquinha de siri','Carne de siri temperada, gratinada na casca, com torradas.',32,''],
+['p5','petiscos','Pastel de camarão','Massa fina e crocante recheada com camarão e catupiry.',26,''],
+['p6','petiscos','Bolinho de peixe','Bolinhos dourados de peixe com ervas e molho de pimenta.',34,''],
+['r1','regionais','Peixe grelhado com pirão','Filé grelhado na chapa, pirão cremoso, arroz e farofa.',68,'t'],
+['r2','regionais','Moqueca de peixe','Peixe em leite de coco, dendê e pimentões; arroz e pirão.',74,'t'],
+['r3','regionais','Caldeirada de frutos do mar','Peixe, camarão e lula em caldo de tomate e ervas.',89,''],
+['r4','regionais','Bobó de camarão','Creme de aipim com camarões, leite de coco e dendê; arroz.',82,''],
+['r5','regionais','Camarão na moranga','Camarões em creme suave servidos dentro da moranga assada.',96,'t'],
+['r6','regionais','Arroz de polvo','Arroz cremoso com polvo macio, alho e coentro.',92,''],
+['d1','dois','Peixe inteiro com acompanhamentos','Peixe inteiro assado ou frito, arroz, pirão, farofa e salada.',178,'s'],
+['d2','dois','Moqueca de frutos do mar','Peixe, camarão e lula no leite de coco e dendê; arroz e pirão.',189,'st'],
+['d3','dois','Seleção de frutos do mar','Camarão, lula, peixe e casquinha de siri, com acompanhamentos.',198,'s'],
+['d4','dois','Camarão com arroz e batatas','Camarões salteados no alho, arroz branco e batatas fritas.',172,'s'],
+['b1','bebidas','Água de coco','Gelada, servida no coco.',14,''],
+['b2','bebidas','Sucos naturais','Sabores da estação. Consulte as opções do dia.',14,''],
+['b3','bebidas','Caipirinhas','Limão, maracujá ou frutas da estação.',24,''],
+['b4','bebidas','Refrigerantes','Lata 350 ml.',9,''],
+['s1','sobremesas','Açaí','Açaí cremoso com banana e granola.',22,''],
+['s2','sobremesas','Cocada','Cocada cremosa de coco fresco.',16,''],
+['s3','sobremesas','Pudim','Pudim de leite com calda de caramelo.',18,''],
+['s4','sobremesas','Sorvete artesanal','Duas bolas; consulte os sabores do dia.',20,'']
+];
+const MENU=RAW.map(([id,cat,name,desc,price,f,photo])=>({id,cat,name,desc,price,share:f.includes('s')||cat==='dois',top:f.includes('t'),photo:photo||''}));
+const REVIEWS=[['Ana P.','Moqueca no ponto e atendimento muito simpático. Voltaremos!'],['Rafael M.','Porções generosas, ótimo para dividir em família.'],['Carolina S.','Lula crocante e ambiente leve. Ótima pedida depois da praia.']];
+const brl=n=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const PAL={petiscos:['#f6d9a8','#d98a2b'],regionais:['#f2b98a','#c2491d'],dois:['#cfe9e4','#e0752f'],bebidas:['#cfe6f3','#2f8fb4'],sobremesas:['#f5dfe3','#8a4b3b']};
+
+/* ============ COMPONENTES ============ */
+function Dish({cat='regionais',seed=0,label}){
+  const [bg,fg]=PAL[cat]||PAL.regionais;
+  const dots=Array.from({length:7},(_,i)=>{const a=(i+seed)*2.1;return [100+Math.cos(a)*(18+i*5),75+Math.sin(a)*(10+i*3),9+((i+seed)%3)*4]});
+  return html`<svg viewBox="0 0 200 150" role="img" aria-label=${label||'Ilustração do prato'} className="w-full h-full" preserveAspectRatio="xMidYMid slice">
+    <rect width="200" height="150" fill=${bg}/><circle cx="100" cy="78" r="62" fill="#fff" opacity=".9"/><circle cx="100" cy="78" r="48" fill="none" stroke=${bg} strokeWidth="3"/>
+    ${dots.map((d,i)=>html`<ellipse key=${i} cx=${d[0]} cy=${d[1]} rx=${d[2]} ry=${d[2]*.7} fill=${i%3===0?'#7fa86a':fg} opacity=${i%3===0?.85:.95}/>`)}
+  </svg>`;
+}
+function Pic({src,cat,seed,alt}){return src?html`<img src=${src} alt=${alt} loading="lazy" decoding="async" className="w-full h-full object-cover"/>`:html`<${Dish} cat=${cat} seed=${seed} label=${alt}/>`}
+const Logo=()=>html`<a href="#top" className="flex items-center gap-2 font-serif text-xl tracking-wide" aria-label="PESCADOR, início">
+  <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="var(--ocean)"/><path d="M4 18c4-4 7 4 12 0s8 4 12 0" stroke="var(--aqua)" strokeWidth="2.4" fill="none" strokeLinecap="round"/><path d="M9 11c4-3 10-3 14 0" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round"/></svg>
+  <span>${CONFIG.name}<span className="hidden sm:inline text-mute text-sm font-sans ml-2">${CONFIG.tagline}</span></span></a>`;
+
+function MenuCard({it,qty,onAdd,onDec,i}){
+  return html`<article className="card flex flex-col">
+    <div className="aspect-[4/3] relative"><${Pic} src=${it.photo} cat=${it.cat} seed=${i} alt=${it.name}/>
+      <div className="absolute top-3 left-3 flex gap-2">${it.share&&html`<span className="tag">Para compartilhar</span>`}${it.top&&html`<span className="tag" style=${{background:'#fff',color:'#0b4a6f'}}>Mais pedido</span>`}</div></div>
+    <div className="p-4 flex flex-col gap-2 flex-1">
+      <div className="flex justify-between gap-3"><h3 className="font-serif text-lg leading-snug">${it.name}</h3><span className="font-semibold text-ocean whitespace-nowrap">${brl(it.price)}</span></div>
+      <p className="text-sm text-mute flex-1">${it.desc}</p>
+      ${qty?html`<div className="flex items-center justify-between rounded-full border border-line px-2 py-1" role="group" aria-label=${'Quantidade de '+it.name}>
+        <button onClick=${()=>onDec(it.id)} className="w-9 h-9 rounded-full text-xl" aria-label="Diminuir">−</button><span className="font-semibold" aria-live="polite">${qty}</span><button onClick=${()=>onAdd(it.id)} className="w-9 h-9 rounded-full text-xl" aria-label="Aumentar">+</button></div>`
+      :html`<button onClick=${()=>onAdd(it.id)} className="btn bg-ocean text-white" style=${{padding:'.65rem 1rem'}}>Adicionar ao pedido</button>`}
+    </div></article>`;
+}
+
+function Cart({open,setOpen,cart,add,dec,clear}){
+  const lines=MENU.filter(m=>cart[m.id]).map(m=>({...m,q:cart[m.id]}));
+  const total=lines.reduce((s,l)=>s+l.q*l.price,0);
+  const [note,setNote]=useState('');
+  const msg=[CONFIG.greeting,'',...lines.map(l=>`${l.q}x ${l.name} — ${brl(l.q*l.price)}`),'',`Total: ${brl(total)}`,note?`Obs.: ${note}`:'','','Pedido enviado pelo site.'].filter((x,i,a)=>x!==''||a[i-1]!=='').join('\n');
+  const link=`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`;
+  return html`<div className=${open?'fixed inset-0 z-50':'hidden'} role="dialog" aria-modal="true" aria-label="Resumo do pedido">
+    <div className="absolute inset-0 bg-black/50" onClick=${()=>setOpen(false)}></div>
+    <aside className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-bg flex flex-col shadow-2xl" style=${{paddingTop:'env(safe-area-inset-top,0px)',paddingBottom:'env(safe-area-inset-bottom,0px)'}}>
+      <div className="flex items-center justify-between p-5 border-b border-line"><h2 className="font-serif text-2xl">Seu pedido</h2><button onClick=${()=>setOpen(false)} className="text-2xl w-10 h-10" aria-label="Fechar">×</button></div>
+      <div className="flex-1 overflow-y-auto p-5 space-y-4">
+        ${lines.length===0&&html`<p className="text-mute">Seu pedido está vazio. Escolha pratos no cardápio — sem cadastro.</p>`}
+        ${lines.map(l=>html`<div key=${l.id} className="flex items-center justify-between gap-3"><div><p className="font-medium">${l.name}</p><p className="text-sm text-mute">${brl(l.price)} cada</p></div>
+          <div className="flex items-center gap-2"><button onClick=${()=>dec(l.id)} className="w-8 h-8 rounded-full border border-line" aria-label=${'Remover um '+l.name}>−</button><span className="w-5 text-center">${l.q}</span><button onClick=${()=>add(l.id)} className="w-8 h-8 rounded-full border border-line" aria-label=${'Adicionar um '+l.name}>+</button></div></div>`)}
+        ${lines.length>0&&html`<label className="block text-sm"><span className="text-mute">Observações (opcional)</span><textarea value=${note} onChange=${e=>setNote(e.target.value)} rows="2" className="mt-1 w-full rounded-xl border border-line bg-card p-3" placeholder="Ex.: sem pimenta, ponto da carne…"></textarea></label>`}
+      </div>
+      <div className="p-5 border-t border-line space-y-3">
+        <div className="flex justify-between text-lg"><span>Total estimado</span><strong>${brl(total)}</strong></div>
+        <a href=${lines.length?link:undefined} target="_blank" rel="noopener" aria-disabled=${!lines.length} className=${'btn btn-wa w-full '+(lines.length?'':'opacity-50 pointer-events-none')}>Finalizar pelo WhatsApp</a>
+        ${lines.length>0&&html`<button onClick=${clear} className="w-full text-sm text-mute underline">Limpar pedido</button>`}
+        <p className="text-xs text-mute">${CONFIG.currencyNote}</p></div></aside></div>`;
+}
+
+function App(){
+  const [cat,setCat]=useState('todos'); const [cart,setCart]=useState({}); const [open,setOpen]=useState(false);
+  const add=id=>setCart(c=>({...c,[id]:(c[id]||0)+1}));
+  const dec=id=>setCart(c=>{const n={...c};if(n[id]>1)n[id]--;else delete n[id];return n});
+  const count=Object.values(cart).reduce((a,b)=>a+b,0);
+  const total=MENU.reduce((s,m)=>s+(cart[m.id]||0)*m.price,0);
+  const items=useMemo(()=>cat==='todos'?MENU:MENU.filter(m=>m.cat===cat),[cat]);
+  const card=(it,i)=>html`<${MenuCard} key=${it.id} it=${it} i=${i} qty=${cart[it.id]} onAdd=${add} onDec=${dec}/>`;
+  const nav=[['sobre','A cozinha'],['cardapio','Cardápio'],['destaques','Mais pedidos'],['galeria','Galeria'],['local','Localização']];
+  const waGeneral=`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent('Olá, PESCADOR! Gostaria de mais informações.')}`;
+  const H=({k,t,s})=>html`<div className="mb-8 max-w-2xl"><p className="text-sm font-semibold tracking-widest uppercase text-ocean">${k}</p><h2 className="font-serif text-3xl sm:text-4xl mt-2">${t}</h2>${s&&html`<p className="text-mute mt-3">${s}</p>`}</div>`;
+  return html`<div id="top">
+  <header className="sticky top-0 z-40 backdrop-blur border-b border-line" style=${{background:'color-mix(in srgb,var(--bg) 88%,transparent)',paddingTop:'env(safe-area-inset-top,0px)'}}>
+    <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between"><${Logo}/>
+      <nav className="hidden md:flex gap-7 text-sm font-medium" aria-label="Principal">${nav.map(([h,l])=>html`<a key=${h} href=${'#'+h} className="hover:text-ocean">${l}</a>`)}</nav>
+      <button onClick=${()=>setOpen(true)} className="btn bg-ocean text-white" style=${{padding:'.55rem 1.1rem'}} aria-label=${'Abrir pedido, '+count+' itens'}>Pedido${count>0&&html`<span className="bg-white text-ocean rounded-full text-xs px-2 py-0.5">${count}</span>`}</button></div>
+    <nav className="md:hidden scroll-x flex gap-5 px-5 pb-3 text-sm font-medium" aria-label="Seções">${nav.map(([h,l])=>html`<a key=${h} href=${'#'+h} className="whitespace-nowrap">${l}</a>`)}</nav></header>
+
+  <main>
+  <section className="hero text-white relative overflow-hidden">
+    <div className="max-w-6xl mx-auto px-5 py-16 sm:py-24 grid md:grid-cols-2 gap-10 items-center">
+      <div><p className="inline-block text-xs tracking-widest uppercase border border-white/40 rounded-full px-3 py-1 mb-5">Cozinha Caiçara · ${CONFIG.city}</p>
+        <h1 className="font-serif text-4xl sm:text-6xl leading-[1.05]">O melhor do mar, servido à sua mesa.</h1>
+        <p className="mt-5 text-lg text-white/85 max-w-md">Frutos do mar, moquecas e pratos generosos, com tempero de casa e atendimento acolhedor.</p>
+        <div className="mt-8 flex flex-wrap gap-3"><a href="#cardapio" className="btn bg-white text-ocean" style=${{color:'#0b4a6f'}}>Ver cardápio e pedir</a><a href=${waGeneral} target="_blank" rel="noopener" className="btn btn-line">Falar no WhatsApp</a></div></div>
+      <div className="rounded-[2rem] overflow-hidden aspect-[5/4] shadow-2xl border border-white/20 bg-sand">
+        ${PHOTOS.hero?html`<img src=${PHOTOS.hero} alt="Frutos do mar servidos à mesa" className="w-full h-full object-cover"/>`:html`<${Dish} cat="dois" seed=${3} label="Seleção de frutos do mar (ilustração)"/>`}</div></div>
+    <svg viewBox="0 0 1440 60" className="block w-full" aria-hidden="true" preserveAspectRatio="none" style=${{height:40}}><path d="M0 30c120 30 240 30 360 0s240-30 360 0 240 30 360 0 240-30 360 0v30H0z" fill="var(--bg)"/></svg></section>
+
+  <section id="sobre" className="max-w-6xl mx-auto px-5 py-16 grid md:grid-cols-2 gap-10 items-center">
+    <div className="rounded-3xl overflow-hidden aspect-[4/3] order-2 md:order-1"><${Pic} src=${PHOTOS.sobre} cat="regionais" seed=${1} alt="Moqueca servida na panela"/></div>
+    <div className="order-1 md:order-2"><${H} k="A cozinha" t="Simplicidade bem executada, sabor de beira-mar."/>
+      <p className="text-mute">Receitas da tradição caiçara com ingredientes escolhidos com cuidado: peixes, camarão, lula e polvo, leite de coco, dendê, ervas e legumes. Pratos generosos, feitos para dividir e para voltar.</p>
+      <ul className="mt-6 grid grid-cols-2 gap-4 text-sm">${[['〰','Frescor','Ingredientes selecionados'],['◍','Tradição','Receitas regionais'],['❖','Generosidade','Pratos fartos'],['♡','Acolhimento','Atendimento próximo']].map(([i,t,d])=>html`<li key=${t} className="card p-4"><span className="text-ocean text-xl" aria-hidden="true">${i}</span><p className="font-semibold mt-1">${t}</p><p className="text-mute">${d}</p></li>`)}</ul></div></section>
+
+  <section id="cardapio" className="bg-sand py-16"><div className="max-w-6xl mx-auto px-5">
+    <${H} k="Cardápio" t="Monte seu pedido" s="Escolha os pratos, ajuste as quantidades e envie tudo pelo WhatsApp. Sem cadastro."/>
+    <div className="scroll-x flex gap-2 mb-8" role="group" aria-label="Filtrar categorias">${[['todos','Todos'],...CATS].map(([k,l])=>html`<button key=${k} className="chip" aria-pressed=${cat===k} onClick=${()=>setCat(k)}>${l}</button>`)}</div>
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">${items.map(card)}</div>
+    <p className="text-xs text-mute mt-6">${CONFIG.currencyNote}</p></div></section>
+
+  <section id="destaques" className="max-w-6xl mx-auto px-5 py-16"><${H} k="Mais pedidos" t="Os favoritos da mesa"/>
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">${MENU.filter(m=>m.top).slice(0,3).map((m,i)=>card(m,i+4))}</div></section>
+
+  <section id="compartilhar" className="text-white py-16" style=${{background:'#0b4a6f',color:'#fff'}}><div className="max-w-6xl mx-auto px-5">
+    <p className="text-sm font-semibold tracking-widest uppercase" style=${{color:'#7fd1c7'}}>Para compartilhar</p><h2 className="font-serif text-3xl sm:text-4xl mt-2 mb-8">Pratos feitos para dividir.</h2>
+    <div className="grid sm:grid-cols-2 gap-4">${MENU.filter(m=>m.cat==='dois').map(m=>html`<div key=${m.id} className="rounded-2xl p-5 flex gap-4 items-start justify-between" style=${{background:'rgba(255,255,255,.07)',border:'1px solid rgba(127,209,199,.28)'}}>
+      <div><h3 className="font-serif text-xl">${m.name}</h3><p className="text-white/80 text-sm mt-1">${m.desc}</p><p className="mt-3 font-semibold text-xl" style=${{color:'#7fd1c7'}}>${brl(m.price)} <span className="font-normal text-sm" style=${{color:'rgba(255,255,255,.65)'}}>· serve 2 pessoas</span></p></div>
+      <button onClick=${()=>add(m.id)} className="btn shrink-0" style=${{background:'#7fd1c7',color:'#06323a',padding:'.55rem 1rem'}} aria-label=${'Adicionar '+m.name}>+ Pedir</button></div>`)}</div></div></section>
+
+  <section id="galeria" className="max-w-6xl mx-auto px-5 py-16"><${H} k="Galeria" t="Do prato à mesa"/>
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">${[['Camarão na moranga','regionais'],['Moqueca de frutos do mar','dois'],['Peixe grelhado','regionais'],['Lula à dorê','petiscos'],['Camarões empanados','petiscos'],['Pratos compartilhados','dois']].map(([t,c],i)=>html`<figure key=${t} className="rounded-2xl overflow-hidden aspect-square relative"><${Pic} src=${PHOTOS.gallery[i]} cat=${c} seed=${i+2} alt=${t}/><figcaption className="absolute bottom-0 inset-x-0 p-3 text-sm text-white" style=${{background:'linear-gradient(transparent,rgba(5,30,45,.75))'}}>${t}</figcaption></figure>`)}</div></section>
+
+  <section id="avaliacoes" className="bg-sand py-16"><div className="max-w-6xl mx-auto px-5"><${H} k="Avaliações" t="O que dizem à mesa" s="Depoimentos ilustrativos, apenas para demonstração do layout."/>
+    <div className="grid md:grid-cols-3 gap-5">${REVIEWS.map(([n,t])=>html`<figure key=${n} className="card p-6"><div className="text-ocean" aria-label="5 de 5 estrelas">★★★★★</div><blockquote className="mt-3">“${t}”</blockquote><figcaption className="mt-4 text-sm text-mute">${n}</figcaption></figure>`)}</div></div></section>
+
+  <section id="local" className="max-w-6xl mx-auto px-5 py-16 grid md:grid-cols-2 gap-8"><div><${H} k="Localização" t="Venha nos visitar"/>
+    <dl className="space-y-4"><div><dt className="text-sm text-mute">Endereço</dt><dd className="font-medium">${CONFIG.address}</dd></div>
+    ${CONFIG.hours.map(([d,h])=>html`<div key=${d}><dt className="text-sm text-mute">${d}</dt><dd className="font-medium">${h}</dd></div>`)}</dl>
+    <div className="mt-6 flex flex-wrap gap-3"><a className="btn btn-wa" href=${waGeneral} target="_blank" rel="noopener">Chamar no WhatsApp</a><a className="btn btn-line text-ocean" href=${'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(CONFIG.mapQuery)} target="_blank" rel="noopener">Abrir no mapa</a></div></div>
+    <div className="card aspect-[4/3] flex items-center justify-center text-center p-6 text-mute"><div><p className="font-serif text-2xl text-ink">${CONFIG.city}</p><p className="mt-2 text-sm">Insira o endereço real em CONFIG.address e CONFIG.mapQuery para ativar o mapa.</p></div></div></section>
+  </main>
+
+  <footer className="text-white py-10" style=${{background:'#0b4a6f',color:'#fff'}}><div className="max-w-6xl mx-auto px-5 flex flex-col md:flex-row justify-between gap-4 text-sm"><div><p className="font-serif text-xl">${CONFIG.name} — ${CONFIG.tagline}</p><p className="text-white/70">${CONFIG.city}</p></div><p className="text-white/70 max-w-sm">${CONFIG.currencyNote} Site demonstrativo.</p></div></footer>
+
+  ${count>0&&!open&&html`<button onClick=${()=>setOpen(true)} className="fixed left-4 right-20 bottom-4 z-40 btn bg-ocean text-white justify-between shadow-xl" style=${{marginBottom:'env(safe-area-inset-bottom,0px)'}}><span>${count} ${count>1?'itens':'item'} · Ver pedido</span><strong>${brl(total)}</strong></button>`}
+  <a href=${waGeneral} target="_blank" rel="noopener" aria-label="Falar no WhatsApp" className="fixed right-4 bottom-4 z-40 w-14 h-14 rounded-full btn-wa flex items-center justify-center shadow-xl" style=${{marginBottom:'env(safe-area-inset-bottom,0px)'}}>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.2 14.1c-.2.6-1.300 1.200-1.800 1.200-.5.100-1 .2-3.300-.7-2.800-1.100-4.600-3.900-4.700-4.100-.1-.2-1.100-1.500-1.100-2.800s.7-2 1-2.300c.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 1.900c.1.200.1.400 0 .6l-.4.600c-.2.200-.3.400-.1.700.2.300.8 1.300 1.700 2 1.100 1 2 1.300 2.300 1.400.3.100.5.100.6-.1l.9-1c.2-.3.400-.2.700-.1l1.800.9c.3.100.5.200.5.300.1.200.1.800-.1 1.200Z"/></svg></a>
+  <${Cart} open=${open} setOpen=${setOpen} cart=${cart} add=${add} dec=${dec} clear=${()=>setCart({})}/>
+  </div>`;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+</script>
+</body>
+</html>
